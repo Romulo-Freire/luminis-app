@@ -1,0 +1,17 @@
+.input-number::-webkit-inner-spin-button,
+.input-number::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;     
+}
+
+.input-number{
+    width: 82px;
+    height: 99px;
+    background-color: rgba(227, 159, 63, 1);
+    border: 6px solid rgba(219, 126, 0, 1);
+    border-radius: 16px;
+    font-size: 30px;
+    text-align: center;
+}
