@@ -1,41 +1,41 @@
 'use client';
-import PrimaryButtom from "../components/PrimaryButtom";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import PrimaryButtom from '../components/PrimaryButtom';
+import IconInput from "../components/IconInput";
+import { useState } from "react";
 
-import './page.css';
-import { useLocalStorage } from "usehooks-ts";
-import { useEffect, useState } from "react";
+import{ sendPasswordResetEmail } from 'firebase/auth';
+import{auth} from '../services/firebaseServices';
 
-interface StorageProps{
-    email: string,
-    passcode: string
-}
-
-export default function RecuperarSenha() {
+export default function EmailRecuperacao(){
     const router = useRouter();
 
-    const [storage, setStorage] = useLocalStorage<StorageProps | null>("resetPassData", null);
-    const [codePartOne, setCodePartOne] = useState<string>('');
-    const [codePartTwo, setCodePartTwo] = useState<string>('');
-    const [codePartThree, setCodePartThree] = useState<string>('');
-    const [codePartFour, setCodePartFour] = useState<string>('');
-    
-    let finalPassCode = "";
+    const [email,setEmail] = useState<string | null>(null);
+    const [sendFinished, setSendFinished] = useState(false);
 
-    useEffect(() => {
-        finalPassCode = codePartOne + codePartTwo + codePartThree + codePartFour;
-        console.log(finalPassCode);
-    }, [codePartOne,codePartTwo,codePartThree,codePartFour]);
+    async function SendLinkResetPass(){
+        if(email == null || email.trim().length == 0 ){
+            alert("O email deve ser preenchido corretamente!");
+            return;
+        }
+        try{
+            const result = await sendPasswordResetEmail(auth, email);
+            console.log(result);
+            setSendFinished(true);
+        }catch(erro){
+            alert("Ocorreu um problema no envio do link. Por favor tente mais tarde.");
+        }
+    }
 
     return (
         <div style={{
             width: '100vw',
             height: '100vh',
-            backgroundImage: 'url(./assets/background-frufru.png)',
-            backgroundSize: 'contain', backgroundRepeat: "no-repeat", //contain - tamanho da imagem original//
+            backgroundImage: 'url(./assets/frufru-inverso.png)',
+            backgroundSize: 'contain', backgroundRepeat: "no-repeat", backgroundPosition: "right", //contain - tamanho da imagem original//
             display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
             backgroundColor: '#fff',
             position: 'relative',
         }}>
@@ -44,105 +44,73 @@ export default function RecuperarSenha() {
                 height: '100%',
                 display: 'flex',
                 justifyContent: 'center',
-                flexDirection: 'column',
-                alignItems: 'center',
+                flexDirection: 'column',                
+                alignItems: 'center',           
             }}>
-                <img src="/assets/LOGO.png" style={{
+                  <img src="/assets/LOGO.png" style={{
                     width: '310px',
                     height: '280px',
                     marginTop: '-165px',
                     marginBottom: '-98px',
-                }}>
-                </img>
-                <div style={{
-                    backgroundColor: 'rgba(255, 149, 0, 0.60)',
-                    width: '60%',
-                    height: '360px',
-                    borderRadius: '15px',
-                    boxShadow: '7px 7px rgba(0, 0, 0, 0.15)',
-                    marginTop: '17px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center'
-                }}>
-                    <h1 style={{
-                        textAlign: 'center',
-                        fontSize: '23px',
-                        marginTop: '30px',
-                        color: 'rgba(153, 89, 0, 1)',
+                }}></img>
+               
+               {!sendFinished ?  
+                <h1 style={{color: "#615959", fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>
+                    Digite o seu e-mail para receber o <br/> link de redefinição 
+                </h1> 
+                    :
+                <h1 style={{color: "#615959", fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>
+                    O link foi enviado para o seu email 
+                </h1> 
+                }
 
-                    }}>Digite o codigo de verificação enviado <br /> para o seu e-mail!</h1>
-                    <div
-                        style={{ 
-                            width: '100%', 
-                            padding: '0px 20%',
-                            marginTop: '20px',
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between"                    
-                        }}
-                    >
-                        <input
-                            className="input-number"  
-                            type="number"
-                            value={codePartOne}
-                            onChange={(event) => setCodePartOne(event.target.value)}
-                        >
-                        </input>
-                        <input 
-                            className="input-number"  
-                            type="number"
-                            value={codePartTwo}
-                            onChange={(event) => setCodePartTwo(event.target.value)}
-                        >
-                        </input>
-                        <input 
-                            className="input-number"  
-                            type="number"
-                            value={codePartThree}
-                            onChange={(event) => setCodePartThree(event.target.value)}
-                        >
-                        </input>
-                        <input
-                            className="input-number"  
-                            type="number"
-                            value={codePartFour}
-                            onChange={(event) => setCodePartFour(event.target.value)}
-                        >
-                        </input>
-                    </div>
-                    <PrimaryButtom style={{
-                        width: '170px',
-                        height: '49px',
-                        fontSize: '20px',                        
-                        marginTop: '35px',
-                        
-                    }}
-                        TextColor='#fff'
-                        BackgroundColor='rgba(219, 126, 0, 1)'
-                        Text='CONFIRMAR'
-                        onClick={()=> router.push('/renovarsenha')}></PrimaryButtom>
-
+                <div 
+                    style={{ width: '480px' }}
+                >
+                    { sendFinished ? 
+                        <PrimaryButtom style={{
+                                width: '91%',
+                                height: '45px',
+                                marginLeft: '30px',
+                                marginTop: '10px'
+                            }}
+                                TextColor='rgb(255, 255, 255)'
+                                BackgroundColor='#FFA424'
+                                Text='Voltar'
+                                onClick={() => router.back()}>
+                            </PrimaryButtom>
+                        :
+                        <>
+                            <IconInput
+                                changeValue={(value) => setEmail(value)}
+                                width='100%'
+                                placeholder="  Digite seu e-mail"
+                                src="/assets/usuario.png"></IconInput>
+                            <PrimaryButtom style={{
+                                width: '91%',
+                                height: '45px',
+                                marginLeft: '30px',
+                                marginTop: '10px'
+                            }}
+                                TextColor='rgb(255, 255, 255)'
+                                BackgroundColor='#FFA424'
+                                Text='Enviar'
+                                onClick={() => SendLinkResetPass()}>
+                            </PrimaryButtom>
+                        </>
+                    }
                 </div>
-                <img style={{
-                    position: 'absolute', // sobrepõe as coisas//
-                    width: '225px',
-                    height: '198px',
-                    bottom: '0', right: '0'
-
-                }} src="/assets/frufru2.png">
-                </img>
-                <img style={{
-                    position: 'absolute', // sobrepõe as coisas//
-                    width: '225px',
-                    height: '198px',
-                    top: '0', right: '0'
-
-                }} src="/assets/circuloreverse.png">
-
-                </img>
             </section>
+            <img
+                style={{ 
+                    position:'absolute',
+                    bottom: '0px',
+                    left: '0px',
+                    width: '240px'
+
+                }} 
+                src="/assets/image-bottom-left.png" 
+                alt="" />
         </div>
     );
 }
-

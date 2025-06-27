@@ -1,25 +1,15 @@
 'use client';
-import Link from 'next/link';
+
 import PrimaryButtom from '../components/PrimaryButtom';
 import { useRouter } from 'next/navigation';
 import IconInput from "../components/IconInput";
-import { useEffect, useState } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
+import { useState } from 'react';
 import{signInWithEmailAndPassword} from 'firebase/auth';
 import{auth} from '../services/firebaseServices';
-import { SendEmail } from '../services/emailSender';
 
 import './page.css';
 
-interface StorageProps{
-    email: string,
-    passcode: string
-}
-
 function Login() {
-
-    const [storage, setStorage] = useLocalStorage<StorageProps | null>("resetPassData", null)
-
     const [email, setEmail]=useState('')
     const [senha, setSenha]=useState('')
         
@@ -37,49 +27,7 @@ function Login() {
         }catch(erro){
             alert('e-mail ou senha incorretos. Tente novamente')
         }
-    }    
-
-    function Generate(n: number, chunks = 0, separator = ' ') : string{
-        var add = 1, max = 12 - add;          
-        var out;
-        if ( n > max ) {
-            out = Generate(max) + Generate(n - max);
-        }
-        else {
-            max = Math.pow(10, n+add);
-            var min    = max/10; 
-            var number = Math.floor( Math.random() * (max - min + 1) ) + min;            
-            out = ("" + number).substring(add);
-        }
-        
-        if (chunks > 0 && n > chunks) {            
-            const instead = []; for (let i = 0; i < out.length; i++) {
-                if (i > 0 && i % chunks === 0) instead.push(separator);
-                instead.push(out[i]);
-            }
-            return instead.join('');
-        }        
-        return out;
-    }
-
-    async function GenerateCodeForPass(){
-        if(email.trim().length == 0){
-            alert('O e-mail deve ser preenchido corretamente!')
-            return;
-        }
-        const result = await SendEmail({ email: email, passcode: '1234' });
-        if(result){
-            const passcode = Generate(4);
-            setStorage({ email, passcode })
-            router.push("/recuperar-senha")
-        }else{
-            alert("Não foi possível enviar o email para redefinição de senha! Por favor tente mais tarde.")
-        }
-    }
-
-    useEffect(() => {
-        setStorage(null);
-    }, []);
+    }             
 
     return (
         <div style={{
@@ -151,7 +99,7 @@ function Login() {
                     <h1 
                         className='hover-all'
                         style={{  marginTop: '15px', marginBottom: '15px', color: '#444444'}}
-                        onClick={() => GenerateCodeForPass()}
+                        onClick={() => router.push("/recuperar-senha")}
                     >
                         <strong>Esqueceu sua senha?</strong>
                     </h1>
@@ -165,9 +113,8 @@ function Login() {
                     TextColor='rgb(255, 255, 255)'
                     BackgroundColor='#FFA424'
                     Text='ENTRAR'
-                    onClick={() => login()}></PrimaryButtom>
-
-
+                    onClick={() => login()}>
+                </PrimaryButtom>
                 <PrimaryButtom style={{
                     width: '71%',
                     height: '45px',
@@ -177,11 +124,9 @@ function Login() {
                     TextColor='rgb(255, 255, 255)'
                     BackgroundColor='#F37900'
                     Text='CADASTRE-SE'
-                    onClick={() => router.push('/cadastro')}></PrimaryButtom>
-
+                    onClick={() => router.push('/cadastro')}>
+                </PrimaryButtom>
             </section>
-
-
         </div>
     );
 
