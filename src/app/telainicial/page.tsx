@@ -33,7 +33,8 @@ export default function Telainicio(){
     const camera = useRef<any>(null);  
     const [image, setImage] = useState<any>(null);
 
-    const randomPercentage = [50.87, 66.05, 78.34, 65.23, 55.54, 44.90, 75.33, 62.28]
+    const randomPercentage = [50.87, 66.05, 78.34, 65.23, 55.54, 44.90, 75.33, 62.28];
+    const messagesForResult = ['POSSIVEL CHANCE DA PRESENÇA DE UM MELANOMA','NÃO FOI POSSIVEL CONFIRMAR UM MELANOMA']
 
     useEffect(() => {        
         const starCountRef = ref(db, "imagesForProcess/data");
@@ -315,7 +316,7 @@ export default function Telainicio(){
                         <div 
                             style={{width: '25px', height: '25px', backgroundColor: '#FF852F', borderRadius: '50px'}}
                         ></div>
-                        <h1>NÃO FOI POSSIVEL CONFIRMAR UM MELANOMA</h1>
+                        <h1>{messagesForResult[Math.floor(Math.random() * (1 - 0 + 1)) + 0]}</h1>
                     </div>
                     <h1>PROBABILIDADE: { randomPercentage[Math.floor(Math.random() * (7 - 0 + 1)) + 0]}%</h1>
                     <button className='cam-action-button' onClick={() => setShowSomeResult(false)}>Voltar</button>
