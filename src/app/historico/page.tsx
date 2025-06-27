@@ -6,14 +6,14 @@ export default function Historico(){
     const [actualHistory, setActualHistory] = useState<number>(0)//variavesi de estado//
     const router=useRouter() 
     return(
-        <div style={{
+        <div  style={{
             backgroundColor: '#EEF0FF',
             width: '100vw',
             height: '100vh',
             overflowX: 'hidden'
         }}>
 
-            <div style={{
+            <div  onClick={() => router.back()} style={{
                 display: 'flex',
                 alignItems: 'center',
                 height: '12%',
@@ -21,12 +21,11 @@ export default function Historico(){
                 backgroundColor: '#fff',
                 boxShadow: '5px 5px rgb( 0, 0 ,0 ,0.1)',          
                   }}>
-                <img   onClick={() => router.back()}src="/assets/seta.png" style={{
-                    width: '50px',
-                    cursor: 'pointer',
+                <img className='hover-all' src="/assets/seta.png" style={{
+                    width: '50px',                    
 
                 }}></img>
-                <p style={{
+                <p className='hover-all' style={{
                     fontSize: '25px',
                     color: '#FF8800',
                 

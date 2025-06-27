@@ -58,3 +58,8 @@
     margin-right: 25px;
     font-size: 18px;
 }
+
+.hover-all:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
